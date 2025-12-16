@@ -1,9 +1,9 @@
 {
-  "name": "was-du-meinst",
+  "name": "reading-your-lips",
   "version": "1.0.0",
   "description": "A gentle German vocabulary journal for two",
   "type": "module",
   "dependencies": {
-    "@neondatabase/serverless": "^0.9.0"
+    "@netlify/neon": "^0.1.0"
   }
 }
