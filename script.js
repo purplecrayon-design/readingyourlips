@@ -80,6 +80,92 @@ async function refreshWord(index) {
     }
 }
 
+// ═══════════════════════════════════════════════════
+// THE VEIL - Privacy Gate
+// ═══════════════════════════════════════════════════
+const PASSPHRASE = 'tangerine';
+let activeVeilInput = null;
+
+function initVeil() {
+    // Check if already unlocked this session
+    if (sessionStorage.getItem('unveiled') === 'true') {
+        document.body.classList.add('unlocked');
+        return;
+    }
+
+    // Add click listeners to profile wrappers
+    document.querySelectorAll('.profile-wrapper').forEach(wrapper => {
+        wrapper.addEventListener('click', (e) => {
+            // Don't trigger if clicking the file input label
+            if (e.target.tagName === 'INPUT') return;
+            e.preventDefault();
+            e.stopPropagation();
+            showVeilInput(wrapper);
+        });
+    });
+
+    // Close veil input when clicking outside
+    document.addEventListener('click', (e) => {
+        if (activeVeilInput && !e.target.closest('.profile-wrapper')) {
+            hideVeilInput();
+        }
+    });
+}
+
+function showVeilInput(wrapper) {
+    // Remove any existing veil input
+    hideVeilInput();
+
+    // Create veil container
+    const container = document.createElement('div');
+    container.className = 'veil-container active';
+
+    const input = document.createElement('input');
+    input.type = 'password';
+    input.className = 'veil-input';
+    input.placeholder = 'whisper...';
+    input.autocomplete = 'off';
+
+    input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            checkVeilPassword(input, container);
+        }
+    });
+
+    container.appendChild(input);
+    wrapper.appendChild(container);
+    activeVeilInput = container;
+
+    // Focus after a brief delay for animation
+    setTimeout(() => input.focus(), 100);
+}
+
+function hideVeilInput() {
+    if (activeVeilInput) {
+        activeVeilInput.remove();
+        activeVeilInput = null;
+    }
+}
+
+function checkVeilPassword(input, container) {
+    if (input.value.toLowerCase() === PASSPHRASE) {
+        unveil();
+    } else {
+        // Wrong password - shake and clear
+        container.classList.add('shake');
+        input.value = '';
+        setTimeout(() => {
+            container.classList.remove('shake');
+        }, 400);
+    }
+}
+
+function unveil() {
+    sessionStorage.setItem('unveiled', 'true');
+    document.body.classList.add('unlocked');
+    hideVeilInput();
+}
+
 // --- QUOTE JAR LOGIC ---
 function loadQuotes() {
     const saved = localStorage.getItem('userQuotesJar');
@@ -401,6 +487,7 @@ function escapeHtml(text) {
 }
 
 // --- STARTUP ---
+initVeil();
 loadQuotes();
 loadData();
 loadPhotos();

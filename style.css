@@ -89,7 +89,7 @@ body.pulse-active {
     filter: blur(10px);
     letter-spacing: 2px;
     z-index: 2;
-    animation: textFocus 2s ease-out 1s forwards;
+    animation: textFocusAndFade 3.5s ease-out 0.8s forwards;
 }
 
 @keyframes breathe {
@@ -98,9 +98,11 @@ body.pulse-active {
     100% { transform: scale(10); opacity: 0; }
 }
 
-@keyframes textFocus {
+@keyframes textFocusAndFade {
     0% { opacity: 0; filter: blur(12px); transform: scale(0.98); }
-    100% { opacity: 1; filter: blur(0px); transform: scale(1); }
+    40% { opacity: 1; filter: blur(0px); transform: scale(1); }
+    75% { opacity: 1; filter: blur(0px); transform: scale(1); }
+    100% { opacity: 0; filter: blur(4px); transform: scale(1.01); }
 }
 
 @keyframes fadeOutSplash {
@@ -127,7 +129,7 @@ body.pulse-active {
         inset 0 0 20px rgba(255, 255, 255, 0.4);
     
     opacity: 0;
-    animation: fadeInContent 1s ease-out 3.2s forwards;
+    animation: fadeInContent 1s ease-out 3.8s forwards;
 }
 
 @keyframes fadeInContent {
@@ -462,6 +464,86 @@ input[type="text"]:focus {
 }
 
 input[type="file"] { display: none; }
+
+/* ═══════════════════════════════════════════════════
+   THE VEIL - Privacy Gate
+   ═══════════════════════════════════════════════════ */
+
+/* Locked state - hide content */
+.quote-wrapper,
+.input-area,
+.word-list {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.6s ease;
+    pointer-events: none;
+}
+
+/* Unlocked state */
+body.unlocked .quote-wrapper,
+body.unlocked .input-area,
+body.unlocked .word-list {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+/* Veil password input */
+.veil-container {
+    position: absolute;
+    bottom: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.veil-container.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.veil-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--accent-lip);
+    padding: 8px 12px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95em;
+    font-style: italic;
+    color: var(--text-main);
+    text-align: center;
+    width: 150px;
+    outline: none;
+}
+
+.veil-input::placeholder {
+    color: var(--accent-warm);
+    opacity: 0.7;
+}
+
+.veil-input:focus {
+    border-bottom-color: var(--accent-deep);
+}
+
+/* Wrong password shake */
+@keyframes shake {
+    0%, 100% { transform: translateX(-50%); }
+    20%, 60% { transform: translateX(calc(-50% - 8px)); }
+    40%, 80% { transform: translateX(calc(-50% + 8px)); }
+}
+
+.veil-container.shake {
+    animation: shake 0.4s ease;
+}
+
+/* Hide veil elements when unlocked */
+body.unlocked .veil-container {
+    display: none;
+}
 
 @media (max-width: 600px) {
     body { padding: 15px; align-items: flex-start; }
