@@ -63,8 +63,8 @@ export async function handler(event) {
       }
 
       const result = await sql`
-        INSERT INTO words (german, english, category)
-        VALUES (${german}, ${english}, ${category || null})
+        INSERT INTO words (german, english, category, last_interacted)
+        VALUES (${german}, ${english}, ${category || null}, NOW())
         RETURNING *
       `;
 
@@ -77,7 +77,7 @@ export async function handler(event) {
 
     // PUT - Update a word
     if (event.httpMethod === 'PUT') {
-      const { id, german, english } = JSON.parse(event.body);
+      const { id, german, english, refresh } = JSON.parse(event.body);
 
       if (!id || !german || !english) {
         return {
@@ -87,11 +87,18 @@ export async function handler(event) {
         };
       }
 
-      const result = await sql`
-        UPDATE words SET german = ${german}, english = ${english}
-        WHERE id = ${id}
-        RETURNING *
-      `;
+      // If refresh flag is set, update last_interacted to now
+      const result = refresh
+        ? await sql`
+            UPDATE words SET german = ${german}, english = ${english}, last_interacted = NOW()
+            WHERE id = ${id}
+            RETURNING *
+          `
+        : await sql`
+            UPDATE words SET german = ${german}, english = ${english}
+            WHERE id = ${id}
+            RETURNING *
+          `;
 
       return {
         statusCode: 200,
