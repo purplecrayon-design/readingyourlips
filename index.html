@@ -333,20 +333,62 @@
             margin-bottom: 4px;
         }
 
-        .delete-btn {
+        .entry-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .edit-btn, .delete-btn {
             background: none;
             border: none;
             color: #ccc;
-            font-size: 1.2em;
+            font-size: 1.1em;
             cursor: pointer;
             transition: color 0.3s;
-            padding: 10px;
+            padding: 8px;
             opacity: 0.5;
+        }
+
+        .edit-btn:hover {
+            color: var(--accent-sage);
+            opacity: 1;
         }
 
         .delete-btn:hover {
             color: var(--accent-lip);
             opacity: 1;
+        }
+
+        .edit-input {
+            background: rgba(255,255,255,0.6);
+            border: none;
+            border-bottom: 1px solid var(--accent-sage);
+            padding: 5px 8px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2em;
+            color: var(--text-main);
+            width: 100%;
+        }
+
+        .edit-input:focus {
+            outline: none;
+            background: rgba(255,255,255,0.9);
+        }
+
+        .save-edit-btn {
+            background: none;
+            border: 1px solid var(--accent-sage);
+            color: var(--accent-sage);
+            font-size: 0.7em;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 3px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .save-edit-btn:hover {
+            background: var(--accent-sage);
+            color: white;
         }
 
         .empty-state {
@@ -649,6 +691,39 @@
             displayWords();
         }
 
+        function editWord(index) {
+            const w = wordsData[index];
+            const list = document.getElementById('wordsList');
+            const entries = list.querySelectorAll('.entry');
+            const entry = entries[index];
+
+            entry.innerHTML = `
+                <div class="word-col">
+                    <span class="lang-label">deutsch</span>
+                    <input type="text" class="edit-input" id="editGerman${index}" value="${escapeHtml(w.german)}">
+                </div>
+                <div class="word-col">
+                    <span class="lang-label">english</span>
+                    <input type="text" class="edit-input" id="editEnglish${index}" value="${escapeHtml(w.english)}">
+                </div>
+                <div class="entry-actions">
+                    <button class="save-edit-btn" onclick="saveEdit(${index})">save</button>
+                </div>
+            `;
+        }
+
+        function saveEdit(index) {
+            const german = document.getElementById('editGerman' + index).value.trim();
+            const english = document.getElementById('editEnglish' + index).value.trim();
+
+            if (german && english) {
+                wordsData[index].german = german;
+                wordsData[index].english = english;
+                saveData();
+            }
+            displayWords();
+        }
+
         function displayWords() {
             const list = document.getElementById('wordsList');
             if (wordsData.length === 0) {
@@ -665,7 +740,10 @@
                         <span class="lang-label">english</span>
                         <div class="word-text">${escapeHtml(w.english)}</div>
                     </div>
-                    <button class="delete-btn" onclick="deleteWord(${i})">&times;</button>
+                    <div class="entry-actions">
+                        <button class="edit-btn" onclick="editWord(${i})">&#9998;</button>
+                        <button class="delete-btn" onclick="deleteWord(${i})">&times;</button>
+                    </div>
                 </div>
             `).join('');
         }
