@@ -6,7 +6,7 @@ export async function handler(event) {
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Content-Type': 'application/json'
   };
 
@@ -70,6 +70,31 @@ export async function handler(event) {
 
       return {
         statusCode: 201,
+        headers,
+        body: JSON.stringify(result[0])
+      };
+    }
+
+    // PUT - Update a word
+    if (event.httpMethod === 'PUT') {
+      const { id, german, english } = JSON.parse(event.body);
+
+      if (!id || !german || !english) {
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({ error: 'ID, German and English words are required' })
+        };
+      }
+
+      const result = await sql`
+        UPDATE words SET german = ${german}, english = ${english}
+        WHERE id = ${id}
+        RETURNING *
+      `;
+
+      return {
+        statusCode: 200,
         headers,
         body: JSON.stringify(result[0])
       };

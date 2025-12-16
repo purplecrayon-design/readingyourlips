@@ -662,33 +662,60 @@
             }
         }
 
-        // Words
-        function loadData() {
-            const saved = localStorage.getItem('sharedWordsData');
-            if (saved) wordsData = JSON.parse(saved);
+        // Words - Database API
+        const API_BASE = '/.netlify/functions';
+
+        async function loadData() {
+            try {
+                const res = await fetch(`${API_BASE}/words`);
+                if (res.ok) {
+                    wordsData = await res.json();
+                }
+            } catch (err) {
+                console.error('Failed to load words:', err);
+                // Fallback to localStorage
+                const saved = localStorage.getItem('sharedWordsData');
+                if (saved) wordsData = JSON.parse(saved);
+            }
             displayWords();
         }
 
-        function saveData() {
-            localStorage.setItem('sharedWordsData', JSON.stringify(wordsData));
-        }
-
-        function addWord() {
+        async function addWord() {
             const g = document.getElementById('germanWord').value.trim();
             const e = document.getElementById('englishWord').value.trim();
             if (g && e) {
-                wordsData.unshift({ german: g, english: e, id: Date.now() });
-                saveData();
-                displayWords();
+                try {
+                    const res = await fetch(`${API_BASE}/words`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ german: g, english: e })
+                    });
+                    if (res.ok) {
+                        const newWord = await res.json();
+                        wordsData.unshift(newWord);
+                        displayWords();
+                    }
+                } catch (err) {
+                    console.error('Failed to add word:', err);
+                }
                 document.getElementById('germanWord').value = '';
                 document.getElementById('englishWord').value = '';
             }
         }
 
-        function deleteWord(index) {
-            wordsData.splice(index, 1);
-            saveData();
-            displayWords();
+        async function deleteWord(index) {
+            const word = wordsData[index];
+            try {
+                await fetch(`${API_BASE}/words`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: word.id })
+                });
+                wordsData.splice(index, 1);
+                displayWords();
+            } catch (err) {
+                console.error('Failed to delete word:', err);
+            }
         }
 
         function editWord(index) {
@@ -712,14 +739,23 @@
             `;
         }
 
-        function saveEdit(index) {
+        async function saveEdit(index) {
             const german = document.getElementById('editGerman' + index).value.trim();
             const english = document.getElementById('editEnglish' + index).value.trim();
+            const word = wordsData[index];
 
             if (german && english) {
-                wordsData[index].german = german;
-                wordsData[index].english = english;
-                saveData();
+                try {
+                    await fetch(`${API_BASE}/words`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: word.id, german, english })
+                    });
+                    wordsData[index].german = german;
+                    wordsData[index].english = english;
+                } catch (err) {
+                    console.error('Failed to update word:', err);
+                }
             }
             displayWords();
         }
