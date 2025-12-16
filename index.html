@@ -513,7 +513,7 @@
                 <div id="quoteTranslation" class="quote-translation"></div>
 
                 <div id="quoteInputContainer" class="quote-input-container">
-                    <input type="text" id="newQuoteInput" class="quote-input" placeholder="whisper a note here..." onkeypress="handleQuoteKey(event)">
+                    <input type="text" id="newQuoteInput" class="quote-input" placeholder="whisper a note here..." onkeypress="handleQuoteKey(event)" autocapitalize="off">
                     <button class="save-quote-btn" onclick="saveNewQuote()">save</button>
                 </div>
 
@@ -545,8 +545,8 @@
 
         <div class="input-area">
             <div class="input-row">
-                <input type="text" id="germanWord" placeholder="auf deutsch..." autocomplete="off">
-                <input type="text" id="englishWord" placeholder="in english..." autocomplete="off">
+                <input type="text" id="germanWord" placeholder="auf deutsch..." autocomplete="off" autocapitalize="off">
+                <input type="text" id="englishWord" placeholder="in english..." autocomplete="off" autocapitalize="off">
             </div>
             <button class="submit-btn" onclick="addWord()">Remember This</button>
         </div>
@@ -700,11 +700,11 @@
             entry.innerHTML = `
                 <div class="word-col">
                     <span class="lang-label">deutsch</span>
-                    <input type="text" class="edit-input" id="editGerman${index}" value="${escapeHtml(w.german)}">
+                    <input type="text" class="edit-input" id="editGerman${index}" value="${escapeHtml(w.german)}" autocapitalize="off">
                 </div>
                 <div class="word-col">
                     <span class="lang-label">english</span>
-                    <input type="text" class="edit-input" id="editEnglish${index}" value="${escapeHtml(w.english)}">
+                    <input type="text" class="edit-input" id="editEnglish${index}" value="${escapeHtml(w.english)}" autocapitalize="off">
                 </div>
                 <div class="entry-actions">
                     <button class="save-edit-btn" onclick="saveEdit(${index})">save</button>
