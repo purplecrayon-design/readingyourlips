@@ -376,6 +376,7 @@ input[type="text"]:focus {
     display: grid;
     grid-template-columns: 1fr 1fr auto;
     align-items: center;
+    gap: 15px;
     padding: 12px 10px;
     margin-bottom: 4px;
     border-radius: 8px;
