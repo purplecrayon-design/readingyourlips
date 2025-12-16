@@ -785,7 +785,19 @@
             try {
                 const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${s}|${t}`);
                 const data = await res.json();
-                return data.responseStatus === 200 ? data.responseData.translatedText : '';
+                if (data.responseStatus === 200) {
+                    let translation = data.responseData.translatedText;
+                    // Match capitalization of original
+                    if (text === text.toLowerCase()) {
+                        translation = translation.toLowerCase();
+                    } else if (text === text.toUpperCase()) {
+                        translation = translation.toUpperCase();
+                    } else if (text[0] === text[0].toLowerCase()) {
+                        translation = translation[0].toLowerCase() + translation.slice(1);
+                    }
+                    return translation;
+                }
+                return '';
             } catch { return ''; }
         }
 
