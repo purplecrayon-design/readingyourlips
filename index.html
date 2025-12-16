@@ -8,14 +8,14 @@
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@200;300;400&display=swap');
 
         :root {
-            --glass-bg: rgba(250, 245, 240, 0.2);
-            --glass-border: rgba(255, 250, 245, 0.4);
-            --text-main: #5C534A;
-            --text-light: #8A8078;
-            --accent-sage: #8B9583;
-            --accent-warm: #C4B5A8;
-            --accent-deep: #5A4A3E;
-            --accent-lip: #B08B8B;
+            --glass-bg: rgba(250, 245, 240, 0.25);
+            --glass-border: rgba(255, 250, 245, 0.35);
+            --text-main: #4A433B;
+            --text-light: #7A7068;
+            --accent-sage: #6B7B63;
+            --accent-warm: #B5A090;
+            --accent-deep: #3D3028;
+            --accent-lip: #9A7070;
         }
 
         * {
@@ -26,10 +26,14 @@
 
         body {
             font-family: 'Montserrat', sans-serif;
+            font-weight: 300;
             min-height: 100vh;
             color: var(--text-main);
             overflow-x: hidden;
-            background: linear-gradient(135deg, #EDE8E2 0%, #E8E2DC 50%, #E5E0DA 100%);
+            background:
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"),
+                linear-gradient(135deg, #E5DED6 0%, #DDD5CC 50%, #D8D0C8 100%);
+            background-blend-mode: overlay;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -58,7 +62,7 @@
         h1 {
             font-family: 'Cormorant Garamond', serif;
             font-size: 3.2em;
-            font-weight: 300;
+            font-weight: 400;
             letter-spacing: 2px;
             color: var(--accent-deep);
             font-style: italic;
